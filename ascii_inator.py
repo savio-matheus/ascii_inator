@@ -11,6 +11,7 @@ class Ascii:
     def __init__(self, filename, multiplier=1, mapping_alg='average'):
         self.pixelMatrix = list()
         self.charMatrix = list()
+        self.colorMatrix = list()
         self.filename = filename
         self.width = 0
         self.height = 0
@@ -27,8 +28,8 @@ class Ascii:
                     print(i, file=f)
         else:
             print(title)
-            for i in self.charMatrix:
-                print(i)
+            for i in range(len(self.charMatrix)):
+                print(self.colored(self.colorMatrix[i][0], self.colorMatrix[i][1], self.colorMatrix[i][2], self.charMatrix[i]))
 
     def __load_image(self):
         with Image(filename=self.filename) as img:
@@ -36,7 +37,7 @@ class Ascii:
             
             # Agrupa os valores em tuplas (r, g, b)
             p = [i for i in zip(*[iter(p)] * 3)]
-
+            self.colorMatrix = p
             # Transforma a lista uma matriz
             self.pixelMatrix = [p[i:i+img.width] for i in range(0, len(p), img.width)]
 
@@ -70,6 +71,9 @@ class Ascii:
     def __luminosity(self, rgb):
         r, g, b = rgb
         return 0.21*r + 0.72*g + 0.07*b
+
+    def colored(self, r, g, b, text):
+        return "\033[38;2;{};{};{}m{} \033[38;2;255;255;255m".format(r, g, b, text)
 
 
 def main():
